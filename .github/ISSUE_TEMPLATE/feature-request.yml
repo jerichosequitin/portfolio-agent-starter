@@ -1,0 +1,39 @@
+name: Feature request
+description: Propose a focused improvement to the reusable starter
+title: "feature: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What owner or visitor need is not met today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome
+      description: Describe the smallest useful behavior and who benefits.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Explain how owners handle this today and why that is insufficient.
+  - type: textarea
+    id: maintenance
+    attributes:
+      label: Maintenance impact
+      description: Note dependencies, configuration, hosting, privacy, cost, or migration effects.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: This belongs in the reusable starter rather than only in my customized copy.
+          required: true
+        - label: I have not included private portfolio content or credentials.
+          required: true

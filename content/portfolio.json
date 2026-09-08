@@ -1,0 +1,63 @@
+{
+  "profile": {
+    "name": "Alex Morgan",
+    "role": "Product-minded software engineer",
+    "intro": "I build dependable digital products with a focus on clear interfaces, thoughtful systems, and useful outcomes.",
+    "location": "Portland, Oregon",
+    "email": "alex@example.com",
+    "availability": "Available for select product and engineering collaborations.",
+    "links": [
+      {
+        "label": "GitHub",
+        "url": "https://example.com/github/alex-morgan"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://example.com/linkedin/alex-morgan"
+      }
+    ]
+  },
+  "about": [
+    "I work across product strategy, interface design, and full-stack engineering. I enjoy turning an unclear problem into a small, durable system that people can understand and trust.",
+    "My best work happens alongside teams that value direct communication, careful craft, and steady iteration. Away from the screen, I am usually reading, cooking, or exploring the Pacific Northwest."
+  ],
+  "experience": [
+    {
+      "role": "Staff Software Engineer",
+      "organization": "Northstar Studio",
+      "period": "2022 - Present",
+      "summary": "Lead product engineering for early-stage teams, from technical discovery through launch. Built shared frontend foundations and helped teams make sound product and architecture decisions."
+    },
+    {
+      "role": "Senior Product Engineer",
+      "organization": "Common Ground",
+      "period": "2019 - 2022",
+      "summary": "Shipped collaboration tools used by distributed teams. Improved accessibility, performance, and release confidence across the core web application."
+    },
+    {
+      "role": "Software Engineer",
+      "organization": "Fieldwork Labs",
+      "period": "2016 - 2019",
+      "summary": "Designed and developed customer-facing web products for mission-driven organizations, with an emphasis on practical design systems and maintainable code."
+    }
+  ],
+  "projects": [
+    {
+      "title": "Signal Notes",
+      "summary": "A focused research notebook that helps small teams capture evidence, connect decisions, and revisit the reasoning behind their work.",
+      "tags": ["Next.js", "TypeScript", "Product design"],
+      "url": "https://example.com/signal-notes"
+    },
+    {
+      "title": "Open Bench",
+      "summary": "An open-source toolkit for publishing clear, reproducible product experiments without a heavyweight analytics stack.",
+      "tags": ["React", "Open source", "Data tools"],
+      "url": "https://example.com/open-bench"
+    },
+    {
+      "title": "Civic Index",
+      "summary": "A searchable public-interest directory designed to make local services easier to find and understand on any device.",
+      "tags": ["Accessibility", "Search", "Design systems"]
+    }
+  ]
+}

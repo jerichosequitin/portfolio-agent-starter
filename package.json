@@ -1,0 +1,41 @@
+{
+  "name": "portfolio-agent-starter",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "bun@1.4.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "bun": ">=1.4.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "doctor": "bun scripts/doctor.ts",
+    "typecheck": "next typegen && tsc --noEmit",
+    "lint": "eslint .",
+    "test": "bun test tests",
+    "test:e2e": "playwright test",
+    "check": "bun run lint && bun run typecheck && bun run test && bun run build"
+  },
+  "dependencies": {
+    "@ai-sdk/gateway": "4.0.75",
+    "@openrouter/ai-sdk-provider": "3.0.0",
+    "ai": "7.0.93",
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
+    "@types/bun": "1.4.1",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "eslint": "9",
+    "eslint-config-next": "16.3.4",
+    "typescript": "5"
+  }
+}
