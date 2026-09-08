@@ -24,7 +24,9 @@ export function readChatConfiguration(env: Record<string, string | undefined>): 
   }
 
   const apiKey = (provider === 'gateway' ? env.AI_GATEWAY_API_KEY : env.OPENROUTER_API_KEY)?.trim();
-  if (!apiKey && !(provider === 'gateway' && env.VERCEL_OIDC_TOKEN?.trim())) {
+  // Vercel Functions supply OIDC through request context; the Gateway SDK resolves it.
+  const gatewayOidcAvailable = env.VERCEL === '1' || Boolean(env.VERCEL_OIDC_TOKEN?.trim());
+  if (!apiKey && !(provider === 'gateway' && gatewayOidcAvailable)) {
     throw new ChatConfigurationError(provider === 'gateway'
       ? 'Gateway requires AI_GATEWAY_API_KEY locally, or Vercel deployment OIDC authentication.'
       : 'OpenRouter requires OPENROUTER_API_KEY.');
