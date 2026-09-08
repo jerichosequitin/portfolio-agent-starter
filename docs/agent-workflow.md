@@ -12,6 +12,7 @@ for missing facts and visual preferences in a compact group. Useful inputs inclu
 - name, role, introduction, location, public email, and availability
 - public links, work history, projects, project URLs, and preferred emphasis
 - color, type, density, tone, and examples of interfaces they like
+- a short headline, a hero image, and project screenshots with alternative text
 
 Do not infer biography, employment, availability, or contact details. Do not copy
 content, design, prompts, or assets from an unrelated private portfolio.
@@ -21,6 +22,11 @@ content, design, prompts, or assets from an unrelated private portfolio.
 Replace the fictional data in `content/portfolio.json`. Keep all owner facts there so
 the static page and concierge stay aligned. Change components for structure and CSS
 for presentation. Keep credentials out of the repository.
+
+The supplied images illustrate fictional projects. Replace them with owner-supplied
+work, generate explicitly illustrative artwork if requested, or remove the optional
+image fields. Do not imply that sample artwork documents the owner's experience.
+Use `bun run doctor` to verify local image paths after customization.
 
 Preserve the request validation, plain-text stream, sanitized errors, server-only
 secrets, bounded output and timeout, factual grounding, uncertainty behavior, and

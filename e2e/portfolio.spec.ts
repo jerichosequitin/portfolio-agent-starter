@@ -1,20 +1,52 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import content from '../content/portfolio.json';
+import { portfolio as content } from '../lib/portfolio';
 
 test('portfolio content is responsive and accessible', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(content.profile.intro);
+  const headline = content.profile.headline;
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(headline ? `${headline.text} ${headline.emphasis}` : content.profile.intro);
   await expect(page.getByRole('link', { name: `Email ${content.profile.name.split(' ')[0]}` })).toHaveAttribute('href', `mailto:${content.profile.email}`);
-  for (const project of content.projects) await expect(page.getByRole('heading', { name: project.title })).toBeVisible();
+  for (const project of content.projects) await expect(page.getByRole('heading', { name: project.title, exact: false })).toBeVisible();
+  for (const image of await page.locator('main img').all()) {
+    await image.scrollIntoViewIfNeeded();
+    await expect(image).toHaveJSProperty('complete', true);
+    expect(await image.evaluate((element: HTMLImageElement) => element.naturalWidth)).toBeGreaterThan(0);
+  }
+  await page.getByRole('link', { name: content.projects.length ? 'Explore my work' : 'A little about me' }).click();
+  await expect(page).toHaveURL(content.projects.length ? /#projects$/ : /#about$/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.screenshot({ path: test.info().outputPath('portfolio.png'), fullPage: true });
 });
 
+test('inline question and suggestion open the same conversation and restore focus', async ({ page }) => {
+  const requests: { messages: { role: string; content: string }[] }[] = [];
+  await page.route('**/api/chat', async (route) => {
+    requests.push(route.request().postDataJSON());
+    await route.fulfill({ contentType: 'text/plain', body: 'I work across product strategy, interface design, and engineering.' });
+  });
+  await page.goto('/');
+  const entry = page.getByRole('textbox', { name: 'Ask the portfolio assistant' });
+  await entry.fill('What kind of work do you do?');
+  await entry.press('Enter');
+  await expect(page.getByRole('log')).toContainText('I work across product strategy');
+  await page.getByRole('textbox', { name: 'Message' }).press('Escape');
+  await expect(entry).toBeFocused();
+  const suggestion = page.getByRole('button', { name: 'Try: How do you approach a project?' });
+  await suggestion.click();
+  await expect(page.getByRole('log')).toContainText('How do you approach a project?');
+  await expect.poll(() => requests.length).toBe(2);
+  expect(requests[1].messages.map((message) => message.role)).toEqual(['user', 'assistant', 'user']);
+  expect(requests[1].messages.at(-1)?.content).toBe('How do you approach a project?');
+  await expect(page.getByRole('status')).toBeEmpty();
+  await page.getByRole('textbox', { name: 'Message' }).press('Escape');
+  await expect(suggestion).toBeFocused();
+});
+
 test('chat sends bounded history, renders text safely, and restores focus', async ({ page }) => {
   let requestBody: { messages: { role: string; content: string }[] } | undefined;
-  const reply = `The featured project is ${content.projects[0].title}. <script>window.compromised = true</script>`;
+  const reply = `This portfolio belongs to ${content.profile.name}. <script>window.compromised = true</script>`;
   await page.route('**/api/chat', async (route) => {
     requestBody = route.request().postDataJSON();
     await route.fulfill({ contentType: 'text/plain; charset=utf-8', body: reply });
@@ -45,7 +77,7 @@ test('disabled chat fails clearly and can be cleared for a new question', async 
   await expect(page.getByRole('button', { name: 'Retry', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Clear chat' }).click();
   await expect(page.getByRole('textbox', { name: 'Message' })).toBeEnabled();
-  await expect(page.getByRole('log')).toContainText('Try asking');
+  await expect(page.getByRole('log')).toContainText('Ask about this portfolio');
 });
 
 test('clear cancels an in-flight response and a new question keeps its own state', async ({ page }) => {

@@ -14,11 +14,24 @@ const publicUrl = z
     return protocol === 'http:' || protocol === 'https:';
   }, 'URL must use http or https');
 
+const portfolioImage = z.object({
+  src: z.string().max(200).regex(
+    /^\/images\/(?:[a-z0-9_-]+\/)*[a-z0-9_-]+\.(?:avif|webp|png|jpe?g)$/i,
+    'Image must be a local file under /images/',
+  ),
+  alt: boundedText('Image description', 300),
+});
+
 export const portfolioSchema = z.object({
   profile: z.object({
     name: boundedText('Name', 80),
     role: boundedText('Role', 120),
     intro: boundedText('Introduction', 500),
+    headline: z.object({
+      text: boundedText('Headline', 80),
+      emphasis: boundedText('Headline emphasis', 80),
+    }).optional(),
+    image: portfolioImage.optional(),
     location: boundedText('Location', 120),
     email: z.string().trim().email().max(254),
     availability: boundedText('Availability', 240),
@@ -49,6 +62,7 @@ export const portfolioSchema = z.object({
         summary: boundedText('Project summary', 800),
         tags: z.array(boundedText('Project tag', 40)).max(8),
         url: publicUrl.optional(),
+        image: portfolioImage.optional(),
       }),
     )
     .max(12),
