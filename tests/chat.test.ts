@@ -20,9 +20,16 @@ describe('provider configuration', () => {
     });
     expect(() => readChatConfiguration({ CHAT_ENABLED: 'true', CHAT_PROVIDER: 'openrouter', VERCEL_OIDC_TOKEN: 'test' })).toThrow('OPENROUTER_API_KEY');
   });
-  test('allows deployed Gateway OIDC and local Gateway keys', () => {
+  test('allows local Gateway OIDC and local Gateway keys', () => {
     expect(readChatConfiguration({ CHAT_ENABLED: 'true', VERCEL_OIDC_TOKEN: 'test' }).provider).toBe('gateway');
     expect(readChatConfiguration({ CHAT_ENABLED: 'true', AI_GATEWAY_API_KEY: 'test' }).apiKey).toBe('test');
+  });
+  test('lets the Gateway SDK resolve Vercel Function OIDC from request context', () => {
+    expect(readChatConfiguration({ CHAT_ENABLED: 'true', VERCEL: '1' })).toEqual({
+      provider: 'gateway', model: 'openai/gpt-4.1-mini', apiKey: undefined,
+    });
+    expect(() => readChatConfiguration({ CHAT_ENABLED: 'true' })).toThrow('Gateway requires');
+    expect(() => readChatConfiguration({ CHAT_ENABLED: 'true', VERCEL: '1', CHAT_PROVIDER: 'openrouter' })).toThrow('OPENROUTER_API_KEY');
   });
   test('rejects unsupported configuration without echoing values', () => {
     expect(() => readChatConfiguration({ CHAT_ENABLED: 'true', CHAT_PROVIDER: 'private-value' })).toThrow('CHAT_PROVIDER must');
