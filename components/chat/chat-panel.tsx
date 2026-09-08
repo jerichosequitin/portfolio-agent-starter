@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, KeyboardEvent, useEffect, useId, useRef, useState } from 'react';
+import { ArrowRight } from '@phosphor-icons/react/dist/csr/ArrowRight';
 
 type Message = {
   id: string;
@@ -42,16 +43,19 @@ export function ChatPanel({ name }: { name: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [entryInput, setEntryInput] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
   const [error, setError] = useState('');
   const [failedMessages, setFailedMessages] = useState<Message[] | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const requestGenerationRef = useRef(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const inputId = useId();
+  const entryInputId = useId();
 
   useEffect(() => {
     if (!isOpen || !dialogRef.current) return;
@@ -73,7 +77,24 @@ export function ChatPanel({ name }: { name: string }) {
   function closePanel() {
     if (dialogRef.current?.open) dialogRef.current.close();
     setIsOpen(false);
-    requestAnimationFrame(() => triggerRef.current?.focus());
+    requestAnimationFrame(() => (returnFocusRef.current ?? triggerRef.current)?.focus());
+  }
+
+  function openPanel(origin: HTMLElement, question?: string) {
+    returnFocusRef.current = origin;
+    setIsOpen(true);
+    if (!question?.trim() || status !== 'idle') return;
+
+    const nextMessages = [...messages, { id: messageId(), role: 'user' as const, content: question.trim() }];
+    setMessages(nextMessages);
+    setEntryInput('');
+    void requestReply(nextMessages);
+  }
+
+  function submitEntry(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const field = event.currentTarget.elements.namedItem('question');
+    if (field instanceof HTMLInputElement) openPanel(field, entryInput);
   }
 
   async function requestReply(requestMessages: Message[]) {
@@ -210,17 +231,42 @@ export function ChatPanel({ name }: { name: string }) {
   }
 
   return (
-    <div className="chat-shell">
-      <button
-        className="chat-trigger"
-        type="button"
-        ref={triggerRef}
-        aria-expanded={isOpen}
-        aria-controls="portfolio-chat"
-        onClick={() => setIsOpen(true)}
-      >
-        Ask about the portfolio
-      </button>
+    <section className="assistant-band" aria-labelledby="assistant-intro-title">
+      <div className="page-shell assistant-entry">
+        <div>
+          <h2 id="assistant-intro-title">
+            <button
+              className="assistant-heading-trigger"
+              type="button"
+              ref={triggerRef}
+              aria-label="A little more curious? Ask about the portfolio"
+              aria-expanded={isOpen}
+              aria-controls="portfolio-chat"
+              onClick={(event) => openPanel(event.currentTarget)}
+            >
+              A little more curious?
+            </button>
+          </h2>
+          <p>Ask my portfolio assistant about the work behind the work.</p>
+        </div>
+        <div>
+          <form className="assistant-form" onSubmit={submitEntry}>
+            <label className="sr-only" htmlFor={entryInputId}>Ask the portfolio assistant</label>
+            <input
+              id={entryInputId}
+              name="question"
+              value={entryInput}
+              maxLength={MAX_INPUT_LENGTH}
+              placeholder="What would you like to know?"
+              onChange={(event) => setEntryInput(event.target.value)}
+            />
+            <button type="submit" aria-label="Ask question"><ArrowRight size={26} weight="thin" aria-hidden="true" /></button>
+          </form>
+          <button className="assistant-suggestion" type="button" onClick={(event) => openPanel(event.currentTarget, 'How do you approach a project?')}>
+            Try: How do you approach a project?
+          </button>
+        </div>
+      </div>
 
       {isOpen ? (
         <dialog
@@ -244,7 +290,7 @@ export function ChatPanel({ name }: { name: string }) {
 
           <div className="chat-log" ref={logRef} role="log" aria-live="polite" aria-relevant="additions text">
             {messages.length === 0 ? (
-              <p className="chat-empty">Try asking about experience, projects, or ways of working.</p>
+              <p className="chat-empty">Ask about this portfolio or ways to get in touch.</p>
             ) : messages.map((message) => (
               <div className={`message message-${message.role}`} key={message.id}>
                 <span>{message.role === 'user' ? 'You' : 'Assistant'}</span>
@@ -291,6 +337,6 @@ export function ChatPanel({ name }: { name: string }) {
           </div>
         </dialog>
       ) : null}
-    </div>
+    </section>
   );
 }

@@ -1,6 +1,6 @@
 # Portfolio Agent Starter
 
-A small, content-first portfolio with an optional AI concierge. Your portfolio and
+A warm, editorial portfolio with an optional AI assistant. Your portfolio and
 the concierge share one validated JSON file, so visitors see the same facts whether
 they browse the page or ask a question.
 
@@ -37,8 +37,22 @@ disabled, which is the default.
 Edit `content/portfolio.json` to replace the fictional content. The application
 validates this file during startup and build. Keep public facts in the content file,
 components responsible for presentation, and styles in CSS.
-The `--accent` and `--accent-dark` variables near the top of `app/globals.css` control the accent
-palette; update the color in `app/icon.svg` to match.
+The visual theme lives in the tokens near the top of `app/globals.css`: `--paper`
+and `--paper-deep` set the backgrounds, `--ink` sets the main text and buttons, and
+`--accent` and `--accent-dark` set supporting accents. Cormorant Garamond is bundled
+locally, so builds and visitors do not depend on a remote font service.
+
+The optional `profile.headline` has `text` and `emphasis` fields. Remove it to use
+the introduction as the main heading. The hero and each project accept an optional
+`image` with a local `src` and descriptive `alt`. Put your images in `public/images/`
+and refer to them as `/images/your-image.webp`. WebP, AVIF, PNG, and JPEG are supported;
+use simple filenames with letters, numbers, hyphens, or underscores. Remove an
+`image` field to use a layout without that image. `bun run doctor` catches missing
+image files.
+
+The bundled artwork is AI-generated illustration for the fictional sample projects.
+Replace it with your own work or remove it when personalizing. It is not evidence of
+real products, clients, or research. See [asset credits](public/images/README.md).
 
 Useful commands:
 

@@ -2,7 +2,15 @@
   "profile": {
     "name": "Alex Morgan",
     "role": "Product-minded software engineer",
-    "intro": "I build dependable digital products with a focus on clear interfaces, thoughtful systems, and useful outcomes.",
+    "intro": "I turn unclear problems into clear interfaces and dependable digital products.",
+    "headline": {
+      "text": "Good ideas,",
+      "emphasis": "built with care."
+    },
+    "image": {
+      "src": "/images/hero-field-notes.webp",
+      "alt": "An illustrated research notebook layered over a Pacific Northwest coastal landscape."
+    },
     "location": "Portland, Oregon",
     "email": "alex@example.com",
     "availability": "Available for select product and engineering collaborations.",
@@ -44,20 +52,32 @@
   "projects": [
     {
       "title": "Signal Notes",
-      "summary": "A focused research notebook that helps small teams capture evidence, connect decisions, and revisit the reasoning behind their work.",
+      "summary": "A focused notebook for research and decisions.",
       "tags": ["Next.js", "TypeScript", "Product design"],
-      "url": "https://example.com/signal-notes"
-    },
-    {
-      "title": "Open Bench",
-      "summary": "An open-source toolkit for publishing clear, reproducible product experiments without a heavyweight analytics stack.",
-      "tags": ["React", "Open source", "Data tools"],
-      "url": "https://example.com/open-bench"
+      "url": "https://example.com/signal-notes",
+      "image": {
+        "src": "/images/signal-notes.webp",
+        "alt": "Illustrative Signal Notes research notebook with linked observations and evidence."
+      }
     },
     {
       "title": "Civic Index",
-      "summary": "A searchable public-interest directory designed to make local services easier to find and understand on any device.",
-      "tags": ["Accessibility", "Search", "Design systems"]
+      "summary": "Local services, easier to find and understand.",
+      "tags": ["Accessibility", "Search", "Design systems"],
+      "image": {
+        "src": "/images/civic-index.webp",
+        "alt": "Illustrative Civic Index directory with local service categories and a map."
+      }
+    },
+    {
+      "title": "Open Bench",
+      "summary": "Reproducible product experiments without a heavyweight analytics stack.",
+      "tags": ["React", "Open source", "Data tools"],
+      "url": "https://example.com/open-bench",
+      "image": {
+        "src": "/images/open-bench.webp",
+        "alt": "Illustrative Open Bench experiment workspace with a comparison chart."
+      }
     }
   ]
 }

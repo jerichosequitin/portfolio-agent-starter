@@ -46,6 +46,12 @@ shape unless the task explicitly changes the public contract:
 - `experience`: entries with `role`, `organization`, `period`, and `summary`
 - `projects`: entries with `title`, `summary`, `tags`, and optional `url`
 
+Optional visual fields are `profile.headline` (`text` and `emphasis`), `profile.image`,
+and each project's `image`. Images have `src` and `alt`; paths must refer to raster
+files under `/images/` in `public/`. These fields may be removed without replacing
+them. Run `bun run doctor` after changing paths. Replace or remove the generated
+sample artwork when personalizing; it does not depict real projects or research.
+
 The static page and chat grounding must import the validated value from
 `lib/portfolio.ts`. Do not duplicate owner facts in components, prompts, or tests.
 
@@ -74,6 +80,7 @@ this prevents the selected provider from processing or logging requests.
 - Prefer small direct changes over new frameworks or infrastructure.
 - The portfolio must remain usable when chat is disabled or misconfigured.
 - A production build must not fetch remote fonts or call a model.
+- Fonts are bundled through Fontsource. Use Phosphor for interface icons.
 - Preserve keyboard use, visible focus, semantic structure, responsive layout,
   reduced-motion behavior, and readable contrast.
 - Use 2-space indentation and single quotes in TypeScript and JavaScript.

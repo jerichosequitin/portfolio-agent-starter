@@ -18,6 +18,16 @@ The schema has four sections:
 - `experience`: role, organization, period, and summary entries
 - `projects`: title, summary, tags, and an optional public URL
 
+The profile may have a two-part `headline` and a hero `image`; projects may have an
+`image`. These optional fields preserve the original content shape when omitted.
+Image paths are limited to local raster files under `public/images/`, with descriptive
+alternative text. The assistant receives the same validated text; it does not inspect
+the illustrations or treat their contents as additional facts.
+
+The page uses a single CSS theme and locally bundled Cormorant Garamond fonts. Project
+imagery is served through Next.js image optimization. The inline question form and
+suggestion open the existing chat dialog and share its conversation state.
+
 Invalid content fails early during development, tests, or build instead of producing
 a partially rendered portfolio or ungrounded chat context.
 

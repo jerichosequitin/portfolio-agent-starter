@@ -7,6 +7,23 @@ describe('portfolio content contract', () => {
     expect(portfolioSchema.parse(portfolio)).toEqual(portfolio);
   });
 
+  test('keeps existing portfolios valid without optional visual content', () => {
+    const content = structuredClone(portfolio);
+    delete content.profile.headline;
+    delete content.profile.image;
+    for (const project of content.projects) delete project.image;
+    expect(portfolioSchema.parse(content)).toEqual(content);
+  });
+
+  test.each(['https://example.com/image.png', '/images/../private.png', '/images/photo.svg'])(
+    'rejects unsupported image path %s',
+    (src) => {
+      const content = structuredClone(portfolio);
+      content.profile.image = { src, alt: 'Example image' };
+      expect(() => portfolioSchema.parse(content)).toThrow('Image must be a local file under /images/');
+    },
+  );
+
   test('rejects incomplete and oversized content', () => {
     expect(() => portfolioSchema.parse({ profile: {} })).toThrow();
 
