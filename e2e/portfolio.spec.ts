@@ -75,3 +75,52 @@ test('clear cancels an in-flight response and a new question keeps its own state
   await expect(page.getByRole('log')).not.toContainText('First question');
   await expect(composer).toBeEnabled();
 });
+
+test('mobile chat contains focus when empty and populated', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'Mobile focus containment regression');
+
+  await page.route('**/api/chat', async (route) => {
+    await route.fulfill({ contentType: 'text/plain; charset=utf-8', body: 'A concise answer.' });
+  });
+  await page.goto('/');
+
+  const trigger = page.getByRole('button', { name: 'Ask about the portfolio' });
+  const dialog = page.getByRole('dialog');
+  const close = page.getByRole('button', { name: 'Close' });
+  await trigger.click();
+
+  const composer = page.getByRole('textbox', { name: 'Message' });
+  await expect(composer).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(composer).toBeFocused();
+
+  await composer.fill('First question');
+  await composer.press('Enter');
+  await expect(dialog).toContainText('A concise answer.');
+  await expect(composer).toBeFocused();
+  expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
+  await composer.fill('Second question');
+
+  const send = page.getByRole('button', { name: 'Send', exact: true });
+  const clear = page.getByRole('button', { name: 'Clear chat' });
+  await expect(composer).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(send).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(clear).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(clear).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(send).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(composer).toBeFocused();
+  await page.screenshot({ path: testInfo.outputPath('focus-contained.png') });
+
+  await page.keyboard.press('Escape');
+  await expect(dialog).not.toBeVisible();
+  await expect(trigger).toBeFocused();
+});

@@ -48,12 +48,16 @@ export function ChatPanel({ name }: { name: string }) {
   const abortControllerRef = useRef<AbortController | null>(null);
   const requestGenerationRef = useRef(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const inputId = useId();
 
   useEffect(() => {
-    if (isOpen) inputRef.current?.focus();
+    if (!isOpen || !dialogRef.current) return;
+
+    dialogRef.current.showModal();
+    inputRef.current?.focus();
   }, [isOpen]);
 
   useEffect(() => {
@@ -67,6 +71,7 @@ export function ChatPanel({ name }: { name: string }) {
   }, []);
 
   function closePanel() {
+    if (dialogRef.current?.open) dialogRef.current.close();
     setIsOpen(false);
     requestAnimationFrame(() => triggerRef.current?.focus());
   }
@@ -172,6 +177,26 @@ export function ChatPanel({ name }: { name: string }) {
     }
   }
 
+  function containDialogFocus(event: KeyboardEvent<HTMLDialogElement>) {
+    if (event.key !== 'Tab') return;
+
+    const focusable = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    );
+    const first = focusable[0];
+    const last = focusable.at(-1);
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last?.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first?.focus();
+    }
+  }
+
   function clearChat() {
     requestGenerationRef.current += 1;
     abortControllerRef.current?.abort();
@@ -198,14 +223,15 @@ export function ChatPanel({ name }: { name: string }) {
       </button>
 
       {isOpen ? (
-        <section
+        <dialog
+          ref={dialogRef}
           className="chat-panel"
           id="portfolio-chat"
-          role="dialog"
-          aria-modal="false"
           aria-labelledby="chat-title"
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') closePanel();
+          onKeyDown={containDialogFocus}
+          onCancel={(event) => {
+            event.preventDefault();
+            closePanel();
           }}
         >
           <div className="chat-header">
@@ -246,7 +272,8 @@ export function ChatPanel({ name }: { name: string }) {
                 placeholder="Ask a question"
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={handleKeyDown}
-                disabled={status !== 'idle'}
+                readOnly={status !== 'idle'}
+                aria-disabled={status !== 'idle'}
               />
               <div className="composer-actions">
                 <span>{input.length}/{MAX_INPUT_LENGTH}</span>
@@ -262,7 +289,7 @@ export function ChatPanel({ name }: { name: string }) {
               <button className="text-button" type="button" onClick={clearChat} disabled={messages.length === 0}>Clear chat</button>
             </div>
           </div>
-        </section>
+        </dialog>
       ) : null}
     </div>
   );
